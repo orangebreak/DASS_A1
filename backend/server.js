@@ -14,7 +14,7 @@ const PasswordReset = require('./models/PasswordReset'); // loads the password r
 const ForumMessage = require('./models/ForumMessage');
 const Feedback = require('./models/Feedback');
 const axios = require('axios');
-const nodemailer = require('nodemailer');
+const { Resend } = require('resend');
 const crypto = require('crypto');
 
 const app = express();
@@ -22,40 +22,29 @@ const app = express();
 app.use(express.json({ limit: '10mb' })); // if a request sends a json data, auto parse and store in req.body
 app.use(cors());
 
-// Email configuration using Nodemailer
-const transporter = nodemailer.createTransport({
-    host: 'smtp.gmail.com',
-    port: 465,
-    secure: true, // use SSL
-    auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
-    }
-});
+// Email configuration using Resend (HTTP-based, works on Render)
+const resend = new Resend(process.env.RESEND_API_KEY);
+const EMAIL_FROM = process.env.EMAIL_FROM || 'Felicity <onboarding@resend.dev>';
 
-// Verify email transporter on startup
-transporter.verify((error, success) => {
-    if (error) {
-        console.error('Email transporter verification failed:', error.message);
-        console.error('Full error:', error);
-    } else {
-        console.log('Email transporter is ready to send emails');
-    }
-});
+// Verify Resend configuration on startup
+if (process.env.RESEND_API_KEY) {
+    console.log('Resend email service configured');
+} else {
+    console.log('Warning: RESEND_API_KEY not set - emails will not be sent');
+}
 
 // Helper function to send ticket email
 async function sendTicketEmail(userEmail, userName, eventName, ticketId, eventType, eventDetails) {
-    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+    if (!process.env.RESEND_API_KEY) {
         console.log('Email not configured - skipping ticket email');
         return;
     }
 
     try {
         const qrCodeDataUrl = await QRCode.toDataURL(ticketId);
-        const qrCodeBase64 = qrCodeDataUrl.split(',')[1];
 
-        const mailOptions = {
-            from: process.env.EMAIL_USER,
+        const { data, error } = await resend.emails.send({
+            from: EMAIL_FROM,
             to: userEmail,
             subject: `Your Ticket for ${eventName}`,
             html: `
@@ -73,7 +62,7 @@ async function sendTicketEmail(userEmail, userName, eventName, ticketId, eventTy
                     
                     <div style="text-align: center; margin: 30px 0;">
                         <p><strong>Your QR Code:</strong></p>
-                        <img src="cid:qrcode" alt="QR Code" style="max-width: 200px;"/>
+                        <img src="${qrCodeDataUrl}" alt="QR Code" style="max-width: 200px;"/>
                         <p style="font-size: 12px; color: #666;">Present this QR code at the event for check-in.</p>
                     </div>
                     
@@ -81,17 +70,14 @@ async function sendTicketEmail(userEmail, userName, eventName, ticketId, eventTy
                         If you have any questions, please contact the event organizer.
                     </p>
                 </div>
-            `,
-            attachments: [{
-                filename: 'qrcode.png',
-                content: qrCodeBase64,
-                encoding: 'base64',
-                cid: 'qrcode'
-            }]
-        };
+            `
+        });
 
-        await transporter.sendMail(mailOptions);
-        console.log(`Ticket email sent to ${userEmail}`);
+        if (error) {
+            console.error('Failed to send ticket email:', error);
+        } else {
+            console.log(`Ticket email sent to ${userEmail}`, data);
+        }
     } catch (err) {
         console.error('Failed to send ticket email:', err.message);
     }
@@ -99,7 +85,7 @@ async function sendTicketEmail(userEmail, userName, eventName, ticketId, eventTy
 
 // Helper function to send password reset email
 async function sendPasswordResetEmail(userEmail, userName, resetToken) {
-    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+    if (!process.env.RESEND_API_KEY) {
         console.log('Email not configured - skipping password reset email');
         return false;
     }
@@ -107,8 +93,8 @@ async function sendPasswordResetEmail(userEmail, userName, resetToken) {
     try {
         const resetUrl = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/reset-password/${resetToken}`;
 
-        const mailOptions = {
-            from: process.env.EMAIL_USER,
+        const { data, error } = await resend.emails.send({
+            from: EMAIL_FROM,
             to: userEmail,
             subject: 'Password Reset Request - Felicity',
             html: `
@@ -137,10 +123,13 @@ async function sendPasswordResetEmail(userEmail, userName, resetToken) {
                     </p>
                 </div>
             `
-        };
+        });
 
-        await transporter.sendMail(mailOptions);
-        console.log(`Password reset email sent to ${userEmail}`);
+        if (error) {
+            console.error('Failed to send password reset email:', error);
+            return false;
+        }
+        console.log(`Password reset email sent to ${userEmail}`, data);
         return true;
     } catch (err) {
         console.error('Failed to send password reset email:', err.message);
