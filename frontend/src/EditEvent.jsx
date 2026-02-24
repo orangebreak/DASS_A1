@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from './api';
 import { useParams, useNavigate } from 'react-router-dom';
 
 function EditEvent() {
@@ -35,7 +35,7 @@ function EditEvent() {
         
         const fetchEvent = async () => {
             try {
-                const res = await axios.get(`http://localhost:3001/events/${id}/analytics`, {
+                const res = await api.get(`/events/${id}/analytics`, {
                     headers: { 'auth-token': token }
                 });
                 const event = res.data;
@@ -175,7 +175,7 @@ function EditEvent() {
             }
             // Ongoing/Completed - no content edits allowed (only status changes via controls)
             
-            await axios.put(`http://localhost:3001/events/${id}`, updatePayload, {
+            await api.put(`/events/${id}`, updatePayload, {
                 headers: { 'auth-token': token }
             });
             

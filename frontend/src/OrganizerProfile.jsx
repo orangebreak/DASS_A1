@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from './api';
 import { useParams, useNavigate } from 'react-router-dom';
 
 function OrganizerProfile() {
@@ -15,7 +15,7 @@ function OrganizerProfile() {
 
         const fetchProfile = async () => {
             try {
-                const res = await axios.get(`http://localhost:3001/organizer/${id}`, {
+                const res = await api.get(`/organizer/${id}`, {
                     headers: { 'auth-token': token }
                 });
                 setProfileData(res.data);

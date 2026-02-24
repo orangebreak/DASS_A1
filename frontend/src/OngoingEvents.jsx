@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from './api';
 import { useNavigate } from 'react-router-dom';
 
 function OngoingEvents() {
@@ -13,7 +13,7 @@ function OngoingEvents() {
 
         const fetchOngoingEvents = async () => {
             try {
-                const response = await axios.get('http://localhost:3001/dashboard', {
+                const response = await api.get('/dashboard', {
                     headers: { 'auth-token': token }
                 });
                 const organizedEvents = response.data.eventsOrganized || [];

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from './api';
 import { useNavigate, useParams } from 'react-router-dom';
 
 function ParticipantEventDetail() {
@@ -31,14 +31,14 @@ function ParticipantEventDetail() {
         const fetchEventDetails = async () => {
             try {
                 // Fetch event details
-                const eventRes = await axios.get(`http://localhost:3001/events/${id}/details`, {
+                const eventRes = await api.get(`/events/${id}/details`, {
                     headers: { 'auth-token': token }
                 });
                 setEvent(eventRes.data);
 
                 // Check if user is already registered
                 try {
-                    const regRes = await axios.get(`http://localhost:3001/my-registration/${id}`, {
+                    const regRes = await api.get(`/my-registration/${id}`, {
                         headers: { 'auth-token': token }
                     });
                     setRegistration(regRes.data);
@@ -125,7 +125,7 @@ function ParticipantEventDetail() {
                 payload.paymentProof = paymentProof;
             }
 
-            const res = await axios.post(`http://localhost:3001/register-event/${id}`, payload, {
+            const res = await api.post(`/register-event/${id}`, payload, {
                 headers: { 'auth-token': token }
             });
 

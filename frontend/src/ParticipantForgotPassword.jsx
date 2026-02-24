@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import axios from 'axios';
+import api from './api';
 import { useNavigate } from 'react-router-dom';
 
 function ParticipantForgotPassword() {
@@ -21,7 +21,7 @@ function ParticipantForgotPassword() {
 
         setLoading(true);
         try {
-            const res = await axios.post('http://localhost:3001/participant/forgot-password', { email });
+            const res = await api.post('/participant/forgot-password', { email });
             setMessage(res.data.message);
         } catch (err) {
             setError(err.response?.data?.error || 'Failed to send reset email. Please try again.');

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import axios from 'axios';
+import api from './api';
 import { useNavigate } from 'react-router-dom';
 
 function PasswordResetRequest() {
@@ -18,13 +18,13 @@ function PasswordResetRequest() {
         try {
             if (token) {
                 // Authenticated request (organizer is logged in)
-                const res = await axios.post('http://localhost:3001/password-reset/request', { reason }, {
+                const res = await api.post('/password-reset/request', { reason }, {
                     headers: { 'auth-token': token }
                 });
                 setMessage(res.data.message);
             } else {
                 // Unauthenticated request (organizer forgot password)
-                const res = await axios.post('http://localhost:3001/password-reset/request-unauthenticated', { email, reason });
+                const res = await api.post('/password-reset/request-unauthenticated', { email, reason });
                 setMessage(res.data.message);
             }
             setReason('');

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from './api';
 import { useParams, useNavigate } from 'react-router-dom';
 
 function MerchandiseOrders() {
@@ -14,7 +14,7 @@ function MerchandiseOrders() {
 
     const fetchOrders = async () => {
         try {
-            const res = await axios.get(`http://localhost:3001/events/${id}/merchandise-orders`, {
+            const res = await api.get(`/events/${id}/merchandise-orders`, {
                 headers: { 'auth-token': token }
             });
             setOrders(res.data);
@@ -31,7 +31,7 @@ function MerchandiseOrders() {
     const handleReview = async (ticketId, action) => {
         setMessage(''); setError('');
         try {
-            const res = await axios.put(`http://localhost:3001/orders/${ticketId}/review`, { action }, {
+            const res = await api.put(`/orders/${ticketId}/review`, { action }, {
                 headers: { 'auth-token': token }
             });
             setMessage(res.data.message);

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from './api';
 import { useNavigate } from 'react-router-dom';
 
 const INTEREST_OPTIONS = [
@@ -41,7 +41,7 @@ function Profile() {
 
         const fetchProfileData = async () => {
             try {
-                const response = await axios.get('http://localhost:3001/dashboard', {
+                const response = await api.get('/dashboard', {
                     headers: { 'auth-token': token }
                 });
                 const userData = response.data.user;
@@ -63,7 +63,7 @@ function Profile() {
 
                 // Fetch all organizers if participant
                 if (userData.role === 'participant') {
-                    const orgRes = await axios.get('http://localhost:3001/all-organizers', {
+                    const orgRes = await api.get('/all-organizers', {
                         headers: { 'auth-token': token }
                     });
                     setAllOrganizers(orgRes.data);
@@ -98,7 +98,7 @@ function Profile() {
                 updatePayload.contactEmail = contactEmail;
             }
 
-            await axios.put('http://localhost:3001/profile', updatePayload, {
+            await api.put('/profile', updatePayload, {
                 headers: { 'auth-token': token }
             });
             setMessage('Profile updated successfully!');
@@ -109,7 +109,7 @@ function Profile() {
 
     const handleFollowToggle = async (organizerId) => {
         try {
-            const res = await axios.post(`http://localhost:3001/follow/${organizerId}`, {}, {
+            const res = await api.post(`/follow/${organizerId}`, {}, {
                 headers: { 'auth-token': token }
             });
             setFollowedClubs(res.data.following);

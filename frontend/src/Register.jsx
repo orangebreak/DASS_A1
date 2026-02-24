@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import axios from 'axios';
+import api from './api';
 import { useNavigate } from 'react-router-dom';
 import ReCAPTCHA from 'react-google-recaptcha';
 
@@ -32,7 +32,7 @@ function Register() {
 
         try {
             // Send request to our dynamic route: /register/IIIT or /register/Non-IIIT
-            await axios.post(`http://localhost:3001/register/${participantType}`, {
+            await api.post(`/register/${participantType}`, {
                 firstName,
                 lastName,
                 email,

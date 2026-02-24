@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import api from './api';
 import { useNavigate } from 'react-router-dom';
 
 function BrowseEvents() {
@@ -30,7 +30,7 @@ function BrowseEvents() {
         if (!token) { navigate('/login'); return; }
         const fetchTrending = async () => {
             try {
-                const res = await axios.get('http://localhost:3001/events-trending', {
+                const res = await api.get('/events-trending', {
                     headers: { 'auth-token': token }
                 });
                 setTrendingEvents(res.data);
@@ -52,7 +52,7 @@ function BrowseEvents() {
             if (dateTo) params.dateTo = dateTo;
             if (followedOnly) params.followedOnly = 'true';
 
-            const response = await axios.get('http://localhost:3001/events', {
+            const response = await api.get('/events', {
                 headers: { 'auth-token': token },
                 params
             });
@@ -89,7 +89,7 @@ function BrowseEvents() {
         }
         
         try {
-            const response = await axios.post(`http://localhost:3001/register-event/${eventId}`, {}, {
+            const response = await api.post(`/register-event/${eventId}`, {}, {
                 headers: { 'auth-token': token }
             });
             setMessage(response.data.message);
@@ -117,7 +117,7 @@ function BrowseEvents() {
 
         setMerchLoading(true);
         try {
-            const response = await axios.post(`http://localhost:3001/register-event/${merchModal._id}`, {
+            const response = await api.post(`/register-event/${merchModal._id}`, {
                 merchandiseSelection: {
                     itemId: selectedItem,
                     variant: selectedVariant,

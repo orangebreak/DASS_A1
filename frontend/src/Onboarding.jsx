@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from './api';
 import { useNavigate } from 'react-router-dom';
 
 const INTEREST_OPTIONS = [
@@ -31,7 +31,7 @@ function Onboarding() {
 
         const fetchOrganizers = async () => {
             try {
-                const res = await axios.get('http://localhost:3001/all-organizers', {
+                const res = await api.get('/all-organizers', {
                     headers: { 'auth-token': token }
                 });
                 setOrganizers(res.data);
@@ -64,7 +64,7 @@ function Onboarding() {
         setSaving(true);
         setError('');
         try {
-            await axios.post('http://localhost:3001/onboarding', {
+            await api.post('/onboarding', {
                 areasOfInterest: selectedInterests,
                 followingClubs: selectedClubs
             }, {
@@ -79,7 +79,7 @@ function Onboarding() {
 
     const handleSkip = async () => {
         try {
-            await axios.post('http://localhost:3001/onboarding', {
+            await api.post('/onboarding', {
                 areasOfInterest: [],
                 followingClubs: [],
                 skip: true

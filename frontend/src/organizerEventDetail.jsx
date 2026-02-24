@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from './api';
 import { useParams, useNavigate } from 'react-router-dom';
 
 function OrganizerEventDetail() {
@@ -29,12 +29,12 @@ function OrganizerEventDetail() {
 
         const fetchAnalyticsAndFeedback = async () => {
             try {
-                const resAnalytics = await axios.get(`http://localhost:3001/events/${id}/analytics`, {
+                const resAnalytics = await api.get(`/events/${id}/analytics`, {
                     headers: { 'auth-token': token }
                 });
                 setAnalytics(resAnalytics.data);
 
-                const resFeedback = await axios.get(`http://localhost:3001/events/${id}/feedback`, {
+                const resFeedback = await api.get(`/events/${id}/feedback`, {
                     headers: { 'auth-token': token }
                 });
                 setFeedbackStats(resFeedback.data);
@@ -48,7 +48,7 @@ function OrganizerEventDetail() {
     const handleStatusChange = async (newStatus) => {
         setMessage(''); setError('');
         try {
-            await axios.put(`http://localhost:3001/events/${id}`, { status: newStatus }, {
+            await api.put(`/events/${id}`, { status: newStatus }, {
                 headers: { 'auth-token': token }
             });
             setAnalytics({ ...analytics, status: newStatus });
@@ -62,7 +62,7 @@ function OrganizerEventDetail() {
         setCancelLoading(true);
         setMessage(''); setError('');
         try {
-            await axios.delete(`http://localhost:3001/events/${id}`, {
+            await api.delete(`/events/${id}`, {
                 headers: { 'auth-token': token }
             });
             navigate('/dashboard', { state: { message: 'Event cancelled and deleted successfully.' } });
@@ -75,7 +75,7 @@ function OrganizerEventDetail() {
 
     const handleExportCSV = async () => {
         try {
-            const response = await axios.get(`http://localhost:3001/events/${id}/analytics/csv`, {
+            const response = await api.get(`/events/${id}/analytics/csv`, {
                 headers: { 'auth-token': token },
                 responseType: 'blob'
             });

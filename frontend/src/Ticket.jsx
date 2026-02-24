@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from './api';
 import { useParams, useNavigate } from 'react-router-dom';
 
 function Ticket() {
@@ -20,7 +20,7 @@ function Ticket() {
         const fetchTicket = async () => {
             try {
                 // Call the GET /tickets/:ticketId route from our backend
-                const response = await axios.get(`http://localhost:3001/tickets/${ticketId}`, {
+                const response = await api.get(`/tickets/${ticketId}`, {
                     headers: { 'auth-token': token }
                 });
                 setTicketData(response.data);

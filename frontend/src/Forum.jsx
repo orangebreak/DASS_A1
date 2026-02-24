@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from './api';
 import { useParams, useNavigate } from 'react-router-dom';
 
 function Forum() {
@@ -28,7 +28,7 @@ function Forum() {
     // Fetch all messages for this event
     const fetchMessages = async () => {
         try {
-            const response = await axios.get(`http://localhost:3001/events/${eventId}/forum`, {
+            const response = await api.get(`/events/${eventId}/forum`, {
                 headers: { 'auth-token': token }
             });
             setMessages(response.data);
@@ -58,7 +58,7 @@ function Forum() {
         if (!newMessage.trim()) return;
 
         try {
-            await axios.post(`http://localhost:3001/events/${eventId}/forum`, {
+            await api.post(`/events/${eventId}/forum`, {
                 message: newMessage,
                 isAnnouncement: false
             }, {
@@ -76,7 +76,7 @@ function Forum() {
     const handlePin = async (messageId, currentPinStatus) => {
         try {
             const action = currentPinStatus ? 'unpin' : 'pin';
-            await axios.put(`http://localhost:3001/forum/${messageId}/moderate`, { action }, {
+            await api.put(`/forum/${messageId}/moderate`, { action }, {
                 headers: { 'auth-token': token }
             });
             fetchMessages(); // Refresh the list to show the pin

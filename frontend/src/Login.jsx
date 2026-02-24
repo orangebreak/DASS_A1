@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import axios from 'axios';
+import api from './api';
 import { useNavigate } from 'react-router-dom';
 import ReCAPTCHA from 'react-google-recaptcha';
 
@@ -24,7 +24,7 @@ function Login() {
         }
         
         try {
-            const res = await axios.post(`${import.meta.env.VITE_API_URL}/login`, { 
+            const res = await api.post('/login', { 
                 email, 
                 password,
                 captchaToken

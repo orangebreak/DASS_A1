@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from './api';
 import { useNavigate } from 'react-router-dom';
 
 function AdminPasswordResets() {
@@ -14,7 +14,7 @@ function AdminPasswordResets() {
 
     const fetchRequests = async () => {
         try {
-            const res = await axios.get('http://localhost:3001/admin/password-resets', {
+            const res = await api.get('/admin/password-resets', {
                 headers: { 'auth-token': token }
             });
             setRequests(res.data);
@@ -31,7 +31,7 @@ function AdminPasswordResets() {
     const handleAction = async (requestId, action) => {
         setMessage(''); setError(''); setNewPassword('');
         try {
-            const res = await axios.put(`http://localhost:3001/admin/password-resets/${requestId}`, {
+            const res = await api.put(`/admin/password-resets/${requestId}`, {
                 action,
                 comments: commentInputs[requestId] || ''
             }, {

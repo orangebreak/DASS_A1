@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from './api';
 import { useNavigate } from 'react-router-dom';
 
 function CreateEvent() {
@@ -83,7 +83,7 @@ function CreateEvent() {
                 placeholder: field.placeholder
             }));
 
-            const response = await axios.post('http://localhost:3001/events', {
+            const response = await api.post('/events', {
                 eventName, eventDescription, eventType, eligibility,
                 regDeadline: new Date(regDeadline),
                 eventStart: new Date(eventStart),
@@ -107,7 +107,7 @@ function CreateEvent() {
 
     const handlePublishNow = async () => {
         try {
-            await axios.put(`http://localhost:3001/events/${createdEventId}`, { status: 'Published' }, {
+            await api.put(`/events/${createdEventId}`, { status: 'Published' }, {
                 headers: { 'auth-token': token }
             });
             navigate('/dashboard');

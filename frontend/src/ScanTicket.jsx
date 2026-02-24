@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import axios from 'axios';
+import api from './api';
 import { useNavigate } from 'react-router-dom';
 import jsQR from 'jsqr';
 
@@ -33,7 +33,7 @@ function ScanTicket() {
         // Fetch organizer's events
         const fetchEvents = async () => {
             try {
-                const res = await axios.get('http://localhost:3001/dashboard', {
+                const res = await api.get('/dashboard', {
                     headers: { 'auth-token': token }
                 });
                 // Filter to only ongoing/published events
@@ -55,7 +55,7 @@ function ScanTicket() {
     const fetchLiveStats = async () => {
         if (!selectedEvent) return;
         try {
-            const res = await axios.get(`http://localhost:3001/events/${selectedEvent}/attendance-live`, {
+            const res = await api.get(`/events/${selectedEvent}/attendance-live`, {
                 headers: { 'auth-token': token }
             });
             setLiveStats(res.data);
@@ -84,7 +84,7 @@ function ScanTicket() {
             return;
         }
         try {
-            const response = await axios.get(`http://localhost:3001/events/${selectedEvent}/attendance-csv`, {
+            const response = await api.get(`/events/${selectedEvent}/attendance-csv`, {
                 headers: { 'auth-token': token },
                 responseType: 'blob'
             });
@@ -118,7 +118,7 @@ function ScanTicket() {
         }
 
         try {
-            const response = await axios.post('http://localhost:3001/events/scan-ticket', {
+            const response = await api.post('/events/scan-ticket', {
                 ticketId: ticketId.trim(),
                 eventId: selectedEvent
             }, {

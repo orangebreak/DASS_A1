@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from './api';
 import { useParams, useNavigate } from 'react-router-dom';
 
 function SubmitFeedback() {
@@ -24,7 +24,7 @@ function SubmitFeedback() {
         setError('');
 
         try {
-            const response = await axios.post(`http://localhost:3001/events/${eventId}/feedback`, {
+            const response = await api.post(`/events/${eventId}/feedback`, {
                 rating: Number(rating),
                 comments: comments
             }, {

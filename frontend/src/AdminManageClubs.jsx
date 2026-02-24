@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from './api';
 import { useNavigate } from 'react-router-dom';
 
 const CATEGORY_OPTIONS = [
@@ -31,7 +31,7 @@ function AdminManageClubs() {
 
     const fetchOrganizers = async () => {
         try {
-            const res = await axios.get('http://localhost:3001/admin/organizers', {
+            const res = await api.get('/admin/organizers', {
                 headers: { 'auth-token': token }
             });
             setOrganizers(res.data);
@@ -49,7 +49,7 @@ function AdminManageClubs() {
         e.preventDefault();
         setMessage(''); setError('');
         try {
-            await axios.post('http://localhost:3001/admin/create-organizer', newOrg, {
+            await api.post('/admin/create-organizer', newOrg, {
                 headers: { 'auth-token': token }
             });
             setMessage('Organizer created successfully!');
@@ -63,7 +63,7 @@ function AdminManageClubs() {
 
     const handleViewCredentials = async (orgId) => {
         try {
-            const res = await axios.get(`http://localhost:3001/admin/organizers/${orgId}/credentials`, {
+            const res = await api.get(`/admin/organizers/${orgId}/credentials`, {
                 headers: { 'auth-token': token }
             });
             setViewCredentials(res.data);
@@ -75,7 +75,7 @@ function AdminManageClubs() {
     const handleDelete = async (id, name, permanent = false) => {
         setMessage(''); setError('');
         try {
-            await axios.delete(`http://localhost:3001/admin/organizers/${id}`, {
+            await api.delete(`/admin/organizers/${id}`, {
                 headers: { 'auth-token': token },
                 data: { permanent }
             });
@@ -90,7 +90,7 @@ function AdminManageClubs() {
     const handleToggleDisable = async (id) => {
         setMessage(''); setError('');
         try {
-            const res = await axios.put(`http://localhost:3001/admin/organizers/${id}/toggle-disable`, {}, {
+            const res = await api.put(`/admin/organizers/${id}/toggle-disable`, {}, {
                 headers: { 'auth-token': token }
             });
             setMessage(res.data.message);

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from './api';
 import { useNavigate } from 'react-router-dom';
 
 function ClubsListing() {
@@ -17,8 +17,8 @@ function ClubsListing() {
         const fetchData = async () => {
             try {
                 const [orgRes, dashRes] = await Promise.all([
-                    axios.get('http://localhost:3001/all-organizers', { headers: { 'auth-token': token } }),
-                    axios.get('http://localhost:3001/dashboard', { headers: { 'auth-token': token } })
+                    api.get('/all-organizers', { headers: { 'auth-token': token } }),
+                    api.get('/dashboard', { headers: { 'auth-token': token } })
                 ]);
                 setOrganizers(orgRes.data);
                 setFollowing(dashRes.data.user.following || []);
@@ -32,7 +32,7 @@ function ClubsListing() {
     const handleFollow = async (organizerId) => {
         setMessage('');
         try {
-            const res = await axios.post(`http://localhost:3001/follow/${organizerId}`, {}, {
+            const res = await api.post(`/follow/${organizerId}`, {}, {
                 headers: { 'auth-token': token }
             });
             setFollowing(res.data.following);
