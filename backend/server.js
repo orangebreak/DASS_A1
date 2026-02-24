@@ -24,10 +24,22 @@ app.use(cors());
 
 // Email configuration using Nodemailer
 const transporter = nodemailer.createTransport({
-    service: process.env.EMAIL_SERVICE || 'gmail',
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: true, // use SSL
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS
+    }
+});
+
+// Verify email transporter on startup
+transporter.verify((error, success) => {
+    if (error) {
+        console.error('Email transporter verification failed:', error.message);
+        console.error('Full error:', error);
+    } else {
+        console.log('Email transporter is ready to send emails');
     }
 });
 
