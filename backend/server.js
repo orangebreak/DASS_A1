@@ -2127,14 +2127,14 @@ app.post('/participant/reset-password', async (req, res) => {
     }
 });
 
+const PORT = process.env.PORT || 3001;
 
 mongoose.connect(process.env.MONGO_URI).then(() => {
     console.log('MongoDB connected');
 
-    app.listen(3001, () => {
-        console.log('Server started on port 3001');
+    app.listen(PORT, () => {
+        console.log(`Server started on port ${PORT}`);
     });
-
 
 }).catch(err => {
     console.error('MongoDB connection error:', err);
